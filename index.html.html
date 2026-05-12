@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URA — HRV Software Analysis Training Manual</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2744;
+    --teal: #0d7a6e;
+    --teal-light: #e6f4f2;
+    --amber: #e8954a;
+    --cream: #faf8f4;
+    --white: #ffffff;
+    --gray-100: #f4f4f2;
+    --gray-200: #e8e6e1;
+    --gray-400: #9e9b95;
+    --gray-600: #5c5a55;
+    --gray-800: #2e2c28;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--gray-800);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ── SIDEBAR NAV ── */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 240px;
+    background: var(--navy);
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 0 28px 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 24px;
+  }
+
+  .sidebar-logo .org {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-logo .title {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--white);
+    line-height: 1.3;
+  }
+
+  .nav-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    padding: 0 28px 8px;
+  }
+
+  .nav-item {
+    display: block;
+    padding: 10px 28px;
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 400;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+    line-height: 1.4;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    color: var(--white);
+    background: rgba(255,255,255,0.06);
+    border-left-color: var(--amber);
+  }
+
+  .nav-item .num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--amber);
+    margin-right: 8px;
+    opacity: 0.8;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 240px;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    padding: 80px 80px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(13,122,110,0.3) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 200px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(232,149,74,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: 52px;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 20px;
+    max-width: 600px;
+  }
+
+  .hero-sub {
+    color: rgba(255,255,255,0.55);
+    font-size: 15px;
+    max-width: 500px;
+    font-weight: 300;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .hero-meta-item .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    margin-bottom: 4px;
+  }
+
+  .hero-meta-item .value {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+  }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    padding: 64px 80px;
+    max-width: 900px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    margin-bottom: 72px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--navy);
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--amber);
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  .section h2 {
+    font-family: var(--serif);
+    font-size: 30px;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+
+  .section h3 {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 32px 0 12px;
+  }
+
+  p {
+    color: var(--gray-600);
+    font-size: 15px;
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+
+  /* ── INFO BOX ── */
+  .infobox {
+    background: var(--teal-light);
+    border-left: 4px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+
+  .infobox-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .infobox ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .infobox ul li {
+    font-size: 14px;
+    color: var(--gray-600);
+    padding: 5px 0;
+    padding-left: 20px;
+    position: relative;
+    font-weight: 300;
+  }
+
+  .infobox ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--teal);
+    font-size: 12px;
+  }
+
+  /* ── AMBER BOX ── */
+  .amberbox {
+    background: #fef8f0;
+    border-left: 4px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+
+  .amberbox-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b8682e;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .amberbox ul { list-style: none; padding: 0; }
+  .amberbox ul li {
+    font-size: 14px;
+    color: var(--gray-600);
+    padding: 5px 0 5px 20px;
+    position: relative;
+    font-weight: 300;
+  }
+  .amberbox ul li::before {
+    content: '◆';
+    position: absolute; left: 0;
+    color: var(--amber);
+    font-size: 9px;
+    top: 9px;
+  }
+
+  /* ── TABLES ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead th {
+    background: var(--navy);
+    color: var(--white);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 400;
+  }
+
+  tbody tr:nth-child(even) { background: var(--gray-100); }
+  tbody tr { transition: background 0.15s; }
+  tbody tr:hover { background: var(--teal-light); }
+
+  td {
+    padding: 12px 16px;
+    color: var(--gray-600);
+    border-bottom: 1px solid var(--gray-200);
+    font-weight: 300;
+    vertical-align: top;
+  }
+
+  td:first-child {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--navy);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* ── SOFTWARE CARDS ── */
+  .tool-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .tool-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 22px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--teal);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+    transform-origin: left;
+  }
+
+  .tool-card:hover { border-color: var(--teal); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .tool-card:hover::before { transform: scaleX(1); }
+
+  .tool-card .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 8px;
+  }
+
+  .tool-card h4 {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+
+  .tool-card p {
+    font-size: 13px;
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  .tool-card .detail {
+    font-size: 12.5px;
+    color: var(--gray-400);
+    margin: 3px 0;
+  }
+
+  /* ── STEPS ── */
+  .steps { margin: 20px 0; }
+
+  .step {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .step-content {
+    padding-top: 4px;
+    font-size: 14.5px;
+    color: var(--gray-600);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  .step-content strong {
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  /* ── LINKS ── */
+  a {
+    color: var(--teal);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  a:hover { border-bottom-color: var(--teal); }
+
+  .link-list { margin: 16px 0; }
+  .link-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-200);
+    color: var(--navy);
+    font-size: 14px;
+  }
+  .link-list a:last-child { border-bottom: none; }
+  .link-list a::before {
+    content: '↗';
+    color: var(--amber);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .link-list a:hover { color: var(--teal); }
+
+  /* ── PROTOCOL STEPS ── */
+  .protocol {
+    background: var(--navy);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin: 20px 0;
+    counter-reset: protocol;
+  }
+
+  .protocol-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 20px;
+  }
+
+  .protocol li {
+    list-style: none;
+    color: rgba(255,255,255,0.75);
+    font-size: 14px;
+    padding: 8px 0 8px 40px;
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-weight: 300;
+    counter-increment: protocol;
+  }
+
+  .protocol li:last-child { border-bottom: none; }
+
+  .protocol li::before {
+    content: counter(protocol, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+    top: 10px;
+  }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-free { background: #e6f4f2; color: var(--teal); }
+  .badge-paid { background: #fef8f0; color: #b8682e; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 32px 80px;
+    font-size: 12px;
+    font-family: var(--mono);
+    letter-spacing: 0.05em;
+    margin-left: 240px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main, .footer { margin-left: 0; }
+    .hero, .content { padding: 40px 28px; }
+    .tool-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="org">URA Sport Science</div>
+    <div class="title">HRV Analysis Manual</div>
+  </div>
+  <div class="nav-label">Contents</div>
+  <a href="#intro" class="nav-item"><span class="num">01</span>What is HRV?</a>
+  <a href="#software" class="nav-item"><span class="num">02</span>Software Tools</a>
+  <a href="#protocol" class="nav-item"><span class="num">03</span>Measurement Protocol</a>
+  <a href="#kubios" class="nav-item"><span class="num">04</span>Kubios Walkthrough</a>
+  <a href="#interpretation" class="nav-item"><span class="num">05</span>Data Interpretation</a>
+  <a href="#troubleshooting" class="nav-item"><span class="num">06</span>Troubleshooting</a>
+  <a href="#resources" class="nav-item"><span class="num">07</span>References</a>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Training Manual · 2026 Edition</div>
+    <h1>HRV Software Analysis</h1>
+    <p class="hero-sub">A practical guide to measuring, analysing, and interpreting Heart Rate Variability data for athlete monitoring at URA.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="label">Department</div>
+        <div class="value">Sport Science</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="label">Audience</div>
+        <div class="value">Coaches &amp; Practitioners</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="label">Version</div>
+        <div class="value">1.0 · May 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- SECTION 1 -->
+    <section class="section" id="intro">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>What is HRV?</h2>
+      </div>
+
+      <p>Heart Rate Variability (HRV) refers to the beat-to-beat fluctuation in the time interval between consecutive heartbeats (the RR interval). Higher HRV generally reflects greater autonomic nervous system flexibility and better physiological readiness to train.</p>
+
+      <div class="infobox">
+        <div class="infobox-title">Why HRV matters for athletes</div>
+        <ul>
+          <li>Assess daily training readiness and recovery status</li>
+          <li>Monitor cumulative fatigue from training load</li>
+          <li>Support individualised periodisation decisions</li>
+          <li>Early detection of overtraining syndrome or illness</li>
+        </ul>
+      </div>
+
+      <h3>Core Metrics</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Metric</th><th>Full Name</th><th>What it reflects</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>RMSSD</td><td>Root Mean Square of Successive Differences</td><td>Parasympathetic (vagal) activity — most commonly used in sport science</td></tr>
+            <tr><td>SDNN</td><td>Standard Deviation of RR intervals</td><td>Overall autonomic regulation; influenced by both branches of the ANS</td></tr>
+            <tr><td>LF/HF Ratio</td><td>Low-Frequency / High-Frequency Power Ratio</td><td>Sympatho-vagal balance; elevated ratio suggests sympathetic dominance</td></tr>
+            <tr><td>pNN50</td><td>Proportion of RR differences &gt; 50 ms</td><td>Similar to RMSSD; reflects parasympathetic activity</td></tr>
+            <tr><td>HF Power</td><td>High-Frequency Power (0.15–0.4 Hz)</td><td>Respiratory sinus arrhythmia; strongly linked to vagal tone</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section class="section" id="software">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Recommended Software Tools</h2>
+      </div>
+
+      <div class="tool-grid">
+        <div class="tool-card">
+          <div class="tag">Desktop · Recommended</div>
+          <h4>Kubios HRV</h4>
+          <p>The gold standard in academic and applied sport science. Rigorous frequency-domain analysis, artifact correction, and batch processing.</p>
+          <div class="detail">📁 Formats: .txt, .csv, Polar, Garmin, Suunto</div>
+          <div class="detail">💻 Windows &amp; macOS</div>
+          <div style="margin-top:12px">
+            <span class="badge badge-free">Standard — Free</span>
+            <span class="badge badge-paid">Premium — Paid</span>
+          </div>
+          <div style="margin-top:14px"><a href="https://www.kubios.com" target="_blank">kubios.com ↗</a></div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tag">Mobile · Daily Monitoring</div>
+          <h4>Elite HRV</h4>
+          <p>Standardised morning measurement protocol with team dashboard. Works with any Bluetooth chest strap. CSV export for downstream analysis.</p>
+          <div class="detail">📱 iOS &amp; Android</div>
+          <div class="detail">🔗 Pairs with Polar H10, Garmin HRM-Pro</div>
+          <div style="margin-top:14px"><a href="https://elitehrv.com" target="_blank">elitehrv.com ↗</a></div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tag">Mobile · Camera-based</div>
+          <h4>HRV4Training</h4>
+          <p>Uses the phone camera (PPG) — no chest strap required. Slightly lower accuracy than ECG, but acceptable for routine daily monitoring.</p>
+          <div class="detail">📱 iOS &amp; Android</div>
+          <div class="detail">⚠️ PPG precision lower than ECG hardware</div>
+          <div style="margin-top:14px"><a href="https://www.hrv4training.com" target="_blank">hrv4training.com ↗</a></div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tag">Advanced · Custom Analysis</div>
+          <h4>Python / R</h4>
+          <p>Full programmatic control for research-grade pipelines. Ideal for practitioners with coding experience who need custom metrics or automation.</p>
+          <div class="detail">🐍 Python: <a href="https://github.com/Aura-healthcare/hrv-analysis" target="_blank">hrv-analysis</a></div>
+          <div class="detail">📊 R: <a href="https://rhrv.r-forge.r-project.org" target="_blank">RHRV package</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section class="section" id="protocol">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>Standard Measurement Protocol</h2>
+      </div>
+
+      <p>HRV data quality is highly dependent on consistent collection conditions. Adhere strictly to the morning protocol below. Small deviations compound into misleading trends over time.</p>
+
+      <div class="protocol">
+        <div class="protocol-title">URA Morning Measurement Protocol</div>
+        <ol class="protocol">
+          <li>Wake up and lie supine for 5 minutes — no conversation, no phone</li>
+          <li>Put on the chest strap (Polar H10 or Garmin HRM-Pro preferred); moisten electrodes slightly</li>
+          <li>Open your HRV app and begin a standard 3–5 minute recording</li>
+          <li>Breathe naturally — do <strong>not</strong> attempt to control breathing rate or depth</li>
+          <li>Measure at the same time, in the same position, every day</li>
+          <li>Log subjective wellbeing: sleep quality (1–5), fatigue (1–5), muscle soreness</li>
+        </ol>
+      </div>
+
+      <h3>Effect of Body Position on HRV</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Position</th><th>Expected HRV</th><th>Recommended use</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Supine (lying)</td><td>Highest — strongest vagal tone</td><td>Gold standard; best repeatability</td></tr>
+            <tr><td>Seated</td><td>Slightly reduced</td><td>Acceptable for mobile / field use</td></tr>
+            <tr><td>Standing</td><td>Noticeably lower</td><td>Used specifically for orthostatic testing</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section class="section" id="kubios">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>Kubios HRV — Step-by-Step</h2>
+      </div>
+
+      <h3>Step 1 · Import Data</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-content">Open Kubios HRV → <strong>File &gt; Open</strong> → select your data file.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content">Supported formats: <code>.txt</code> (RR interval list in ms), <code>.csv</code>, and device exports (Polar, Garmin, Suunto).</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-content">Confirm signal length and sampling in the left-hand panel before proceeding.</div></div>
+      </div>
+
+      <h3>Step 2 · Quality Check &amp; Artefact Correction</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-content">Inspect the RR interval time-series plot for outliers (ectopic beats, movement artefacts).</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content">Enable <strong>Artifact Correction → Moderate</strong> (recommended default). Use <em>None</em> only for pristine lab ECG data.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-content">Ensure the usable data segment is <strong>≥ 3 minutes</strong> (5 min preferred for frequency domain analysis).</div></div>
+      </div>
+
+      <p>📄 <a href="https://www.kubios.com/downloads/Kubios_HRV_Users_Guide.pdf" target="_blank">Official Kubios User Guide (PDF)</a></p>
+
+      <h3>Step 3 · Analysis Settings</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Parameter</th><th>Recommended Setting</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Analysis window</td><td>5 min (standard); 1 min ultra-short — note in reporting</td></tr>
+            <tr><td>Artifact correction</td><td>Moderate (unless data is extremely noisy)</td></tr>
+            <tr><td>Frequency method</td><td>Welch's Periodogram or AR model (both acceptable)</td></tr>
+            <tr><td>Smoothing priors λ</td><td>500 (default; suitable for most datasets)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Step 4 · Export Results</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-content"><strong>PDF Report:</strong> Report &gt; Save Report</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Batch processing</strong> (multiple files): requires Kubios Premium — use File &gt; Batch Processing.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-content"><strong>CSV export</strong> for statistical analysis: File &gt; Export Results.</div></div>
+      </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section class="section" id="interpretation">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2>Data Interpretation</h2>
+      </div>
+
+      <p>HRV varies enormously between individuals. Absolute values cannot be meaningfully compared across athletes. Always interpret relative to <strong>each athlete's personal baseline</strong>.</p>
+
+      <div class="amberbox">
+        <div class="amberbox-title">Interpretation Reference (relative to personal mean)</div>
+        <ul>
+          <li><strong>Normal range:</strong> within ±1 SD of rolling mean — continue planned training</li>
+          <li><strong>Mild suppression:</strong> 1–2 SD below mean — reduce intensity, prioritise recovery</li>
+          <li><strong>Significant suppression:</strong> &gt;2 SD below mean — consider rest day; rule out illness or overtraining</li>
+          <li><strong>Unusually elevated HRV:</strong> not always positive — extreme elevation may indicate early illness or parasympathetic rebound</li>
+        </ul>
+      </div>
+
+      <h3>Trend Analysis Principles</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">✓</div><div class="step-content">Use a <strong>7-day rolling average</strong> to smooth daily noise before drawing conclusions.</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-content">Contextualise with training load metrics (TSS, sRPE, ACWR).</div></div>
+        <div class="step"><div class="step-num">✓</div><div class="step-content">A <strong>sustained downward trend</strong> over multiple days carries more clinical weight than a single low reading.</div></div>
+      </div>
+
+      <p>📄 Reference: <a href="https://doi.org/10.1123/ijspp.8.3.346" target="_blank">Plews et al. (2013) — Training Adaptation and HRV, IJSPP</a></p>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section class="section" id="troubleshooting">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2>Troubleshooting</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Problem</th><th>Likely Cause &amp; Solution</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Noisy / unstable signal</td><td>Poor electrode contact → moisten strap before wearing; check strap tension</td></tr>
+            <tr><td>Abnormally low HRV</td><td>Activity before measurement; insufficient rest; re-check protocol timing and posture</td></tr>
+            <tr><td>File format not recognised</td><td>Format mismatch → confirm device export format; convert to plain .txt RR interval list</td></tr>
+            <tr><td>High batch-to-batch variability</td><td>Inconsistent conditions → audit measurement time, posture, strap model across sessions</td></tr>
+            <tr><td>Frequency domain metrics missing</td><td>Kubios Standard lacks full frequency features → upgrade to Premium or switch to Python</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section class="section" id="resources">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2>References &amp; Resources</h2>
+      </div>
+
+      <h3>Key Literature</h3>
+      <div class="link-list">
+        <a href="https://doi.org/10.1093/oxfordjournals.eurheartj.a014868" target="_blank">Task Force ESC/NASPE — HRV Standards of Measurement (1996), European Heart Journal</a>
+        <a href="https://doi.org/10.1007/s40279-016-0645-7" target="_blank">Plews et al. — HRV in Elite Athletes: A Review, Sports Medicine (2017)</a>
+        <a href="https://doi.org/10.3389/fphys.2014.00002" target="_blank">Buchheit — Monitoring Training Status with HRV, Frontiers in Physiology (2014)</a>
+        <a href="https://doi.org/10.1123/ijspp.8.3.346" target="_blank">Plews et al. — Training Adaptation and HRV, IJSPP (2013)</a>
+      </div>
+
+      <h3>Software &amp; Hardware</h3>
+      <div class="link-list">
+        <a href="https://www.kubios.com" target="_blank">Kubios HRV — Official website &amp; downloads</a>
+        <a href="https://elitehrv.com" target="_blank">Elite HRV — App &amp; team management</a>
+        <a href="https://www.hrv4training.com" target="_blank">HRV4Training — Camera-based PPG app</a>
+        <a href="https://github.com/Aura-healthcare/hrv-analysis" target="_blank">Python hrv-analysis library (GitHub)</a>
+        <a href="https://rhrv.r-forge.r-project.org" target="_blank">RHRV — R package for HRV analysis</a>
+        <a href="https://www.polar.com/en/sensors/h10-heart-rate-sensor" target="_blank">Polar H10 — Recommended chest strap</a>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+</main>
+
+<footer class="footer">
+  URA Sport Science Department · HRV Training Manual 2026 · For internal use only
+</footer>
+
+<script>
+  // Active nav highlight on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
