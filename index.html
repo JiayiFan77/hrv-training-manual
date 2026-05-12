@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>URA — HRV Software Analysis Training Manual</title>
+<title>HRV Software Analysis Training Manual</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -566,17 +566,11 @@
 <!-- SIDEBAR -->
 <nav class="sidebar">
   <div class="sidebar-logo">
-    <div class="org">URA Sport Science</div>
-    <div class="title">HRV Analysis Manual</div>
+    <div class="org">Training Manual</div>
+    <div class="title">HRV Processing</div>
   </div>
   <div class="nav-label">Contents</div>
   <a href="#intro" class="nav-item"><span class="num">01</span>What is HRV?</a>
-  <a href="#software" class="nav-item"><span class="num">02</span>Software Tools</a>
-  <a href="#protocol" class="nav-item"><span class="num">03</span>Measurement Protocol</a>
-  <a href="#kubios" class="nav-item"><span class="num">04</span>Kubios Walkthrough</a>
-  <a href="#interpretation" class="nav-item"><span class="num">05</span>Data Interpretation</a>
-  <a href="#troubleshooting" class="nav-item"><span class="num">06</span>Troubleshooting</a>
-  <a href="#resources" class="nav-item"><span class="num">07</span>References</a>
 </nav>
 
 <!-- MAIN -->
@@ -584,21 +578,16 @@
 
   <!-- HERO -->
   <div class="hero">
-    <div class="hero-eyebrow">Training Manual · 2026 Edition</div>
-    <h1>HRV Software Analysis</h1>
-    <p class="hero-sub">A practical guide to measuring, analysing, and interpreting Heart Rate Variability data for athlete monitoring at URA.</p>
+    <div class="hero-eyebrow">Training Manual</div>
+    <h1>HRV Processing</h1>
     <div class="hero-meta">
       <div class="hero-meta-item">
-        <div class="label">Department</div>
-        <div class="value">Sport Science</div>
+        <div class="label">Author</div>
+        <div class="value">Jiayi Fan</div>
       </div>
       <div class="hero-meta-item">
-        <div class="label">Audience</div>
-        <div class="value">Coaches &amp; Practitioners</div>
-      </div>
-      <div class="hero-meta-item">
-        <div class="label">Version</div>
-        <div class="value">1.0 · May 2026</div>
+        <div class="label">Update</div>
+        <div class="value">May 2026</div>
       </div>
     </div>
   </div>
@@ -609,248 +598,28 @@
     <section class="section" id="intro">
       <div class="section-header">
         <span class="section-num">01</span>
-        <h2>What is HRV?</h2>
+        <h2>About ECG</h2>
       </div>
 
-      <p>Heart Rate Variability (HRV) refers to the beat-to-beat fluctuation in the time interval between consecutive heartbeats (the RR interval). Higher HRV generally reflects greater autonomic nervous system flexibility and better physiological readiness to train.</p>
+      <p>The ECG (electrocardiogram, also called EKG) is a way to measure the electrical activity of the heart. Each heartbeat produces a small electrical signal, and the ECG records this signal over time.</p>
 
-      <div class="infobox">
-        <div class="infobox-title">Why HRV matters for athletes</div>
-        <ul>
-          <li>Assess daily training readiness and recovery status</li>
-          <li>Monitor cumulative fatigue from training load</li>
-          <li>Support individualised periodisation decisions</li>
-          <li>Early detection of overtraining syndrome or illness</li>
-        </ul>
-      </div>
+      <p>Researchers use ECG signals in psychophysiology to understand how the heart and nervous system work together. For example, from ECG data we can calculate heart rate, heart rate variability (HRV), and respiratory sinus arrhythmia (RSA), which reflects how heart rate changes with breathing and is closely linked to activity in the parasympathetic nervous system. When ECG is recorded together with impedance signals, we can also estimate sympathetic nervous system activity using measures such as pre-ejection period, stroke volume, and cardiac output.</p> 
 
-      <h3>Core Metrics</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Metric</th><th>Full Name</th><th>What it reflects</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>RMSSD</td><td>Root Mean Square of Successive Differences</td><td>Parasympathetic (vagal) activity — most commonly used in sport science</td></tr>
-            <tr><td>SDNN</td><td>Standard Deviation of RR intervals</td><td>Overall autonomic regulation; influenced by both branches of the ANS</td></tr>
-            <tr><td>LF/HF Ratio</td><td>Low-Frequency / High-Frequency Power Ratio</td><td>Sympatho-vagal balance; elevated ratio suggests sympathetic dominance</td></tr>
-            <tr><td>pNN50</td><td>Proportion of RR differences &gt; 50 ms</td><td>Similar to RMSSD; reflects parasympathetic activity</td></tr>
-            <tr><td>HF Power</td><td>High-Frequency Power (0.15–0.4 Hz)</td><td>Respiratory sinus arrhythmia; strongly linked to vagal tone</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <p>Before analyzing data, it is important to understand what a normal ECG looks like and what each part of the waveform represents.</p>
+      
+      <h3>Components of ECG</h3>
+      <p>In clinical cardiology, a 12-lead ECG is commonly used to capture the heart’s electrical activity from multiple perspectives, making it highly useful for medical diagnosis. However, this level of complexity is not necessary for studying heart rate variability or impedance cardiography. </p>
+
+      <p>For these applications, a simpler 3-electrode setup—known as a Lead II configuration—is typically sufficient. This configuration produces a clear and consistent waveform, allowing for reliable identification of key fiducial points, particularly the R peak.</p>
+      
+      <p>The following figure illustrates a typical ECG cycle recorded using this configuration:</p>
+      
+      <img src="images/ECG_anatomy.png" alt="ECG waveform" style="max-width:100%;">
+    
+      <p>On the graph above, you will notice several labeled components of the ECG waveform: P, Q, R, S, and T waves. At this stage, it is not essential to fully understand the physiological basis of this morphology. However, it is important to be able to visually recognize these components and understand their relative timing within each cardiac cycle.</p>
+    
+      <p>For heart rate variability and impedance cardiography, the R peak is the most critical feature to identify. Once the R peaks are reliably detected, many downstream analyses become possible and more straightforward.</p>
     </section>
-
-    <!-- SECTION 2 -->
-    <section class="section" id="software">
-      <div class="section-header">
-        <span class="section-num">02</span>
-        <h2>Recommended Software Tools</h2>
-      </div>
-
-      <div class="tool-grid">
-        <div class="tool-card">
-          <div class="tag">Desktop · Recommended</div>
-          <h4>Kubios HRV</h4>
-          <p>The gold standard in academic and applied sport science. Rigorous frequency-domain analysis, artifact correction, and batch processing.</p>
-          <div class="detail">📁 Formats: .txt, .csv, Polar, Garmin, Suunto</div>
-          <div class="detail">💻 Windows &amp; macOS</div>
-          <div style="margin-top:12px">
-            <span class="badge badge-free">Standard — Free</span>
-            <span class="badge badge-paid">Premium — Paid</span>
-          </div>
-          <div style="margin-top:14px"><a href="https://www.kubios.com" target="_blank">kubios.com ↗</a></div>
-        </div>
-
-        <div class="tool-card">
-          <div class="tag">Mobile · Daily Monitoring</div>
-          <h4>Elite HRV</h4>
-          <p>Standardised morning measurement protocol with team dashboard. Works with any Bluetooth chest strap. CSV export for downstream analysis.</p>
-          <div class="detail">📱 iOS &amp; Android</div>
-          <div class="detail">🔗 Pairs with Polar H10, Garmin HRM-Pro</div>
-          <div style="margin-top:14px"><a href="https://elitehrv.com" target="_blank">elitehrv.com ↗</a></div>
-        </div>
-
-        <div class="tool-card">
-          <div class="tag">Mobile · Camera-based</div>
-          <h4>HRV4Training</h4>
-          <p>Uses the phone camera (PPG) — no chest strap required. Slightly lower accuracy than ECG, but acceptable for routine daily monitoring.</p>
-          <div class="detail">📱 iOS &amp; Android</div>
-          <div class="detail">⚠️ PPG precision lower than ECG hardware</div>
-          <div style="margin-top:14px"><a href="https://www.hrv4training.com" target="_blank">hrv4training.com ↗</a></div>
-        </div>
-
-        <div class="tool-card">
-          <div class="tag">Advanced · Custom Analysis</div>
-          <h4>Python / R</h4>
-          <p>Full programmatic control for research-grade pipelines. Ideal for practitioners with coding experience who need custom metrics or automation.</p>
-          <div class="detail">🐍 Python: <a href="https://github.com/Aura-healthcare/hrv-analysis" target="_blank">hrv-analysis</a></div>
-          <div class="detail">📊 R: <a href="https://rhrv.r-forge.r-project.org" target="_blank">RHRV package</a></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 3 -->
-    <section class="section" id="protocol">
-      <div class="section-header">
-        <span class="section-num">03</span>
-        <h2>Standard Measurement Protocol</h2>
-      </div>
-
-      <p>HRV data quality is highly dependent on consistent collection conditions. Adhere strictly to the morning protocol below. Small deviations compound into misleading trends over time.</p>
-
-      <div class="protocol">
-        <div class="protocol-title">URA Morning Measurement Protocol</div>
-        <ol class="protocol">
-          <li>Wake up and lie supine for 5 minutes — no conversation, no phone</li>
-          <li>Put on the chest strap (Polar H10 or Garmin HRM-Pro preferred); moisten electrodes slightly</li>
-          <li>Open your HRV app and begin a standard 3–5 minute recording</li>
-          <li>Breathe naturally — do <strong>not</strong> attempt to control breathing rate or depth</li>
-          <li>Measure at the same time, in the same position, every day</li>
-          <li>Log subjective wellbeing: sleep quality (1–5), fatigue (1–5), muscle soreness</li>
-        </ol>
-      </div>
-
-      <h3>Effect of Body Position on HRV</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Position</th><th>Expected HRV</th><th>Recommended use</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Supine (lying)</td><td>Highest — strongest vagal tone</td><td>Gold standard; best repeatability</td></tr>
-            <tr><td>Seated</td><td>Slightly reduced</td><td>Acceptable for mobile / field use</td></tr>
-            <tr><td>Standing</td><td>Noticeably lower</td><td>Used specifically for orthostatic testing</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- SECTION 4 -->
-    <section class="section" id="kubios">
-      <div class="section-header">
-        <span class="section-num">04</span>
-        <h2>Kubios HRV — Step-by-Step</h2>
-      </div>
-
-      <h3>Step 1 · Import Data</h3>
-      <div class="steps">
-        <div class="step"><div class="step-num">1</div><div class="step-content">Open Kubios HRV → <strong>File &gt; Open</strong> → select your data file.</div></div>
-        <div class="step"><div class="step-num">2</div><div class="step-content">Supported formats: <code>.txt</code> (RR interval list in ms), <code>.csv</code>, and device exports (Polar, Garmin, Suunto).</div></div>
-        <div class="step"><div class="step-num">3</div><div class="step-content">Confirm signal length and sampling in the left-hand panel before proceeding.</div></div>
-      </div>
-
-      <h3>Step 2 · Quality Check &amp; Artefact Correction</h3>
-      <div class="steps">
-        <div class="step"><div class="step-num">1</div><div class="step-content">Inspect the RR interval time-series plot for outliers (ectopic beats, movement artefacts).</div></div>
-        <div class="step"><div class="step-num">2</div><div class="step-content">Enable <strong>Artifact Correction → Moderate</strong> (recommended default). Use <em>None</em> only for pristine lab ECG data.</div></div>
-        <div class="step"><div class="step-num">3</div><div class="step-content">Ensure the usable data segment is <strong>≥ 3 minutes</strong> (5 min preferred for frequency domain analysis).</div></div>
-      </div>
-
-      <p>📄 <a href="https://www.kubios.com/downloads/Kubios_HRV_Users_Guide.pdf" target="_blank">Official Kubios User Guide (PDF)</a></p>
-
-      <h3>Step 3 · Analysis Settings</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Parameter</th><th>Recommended Setting</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Analysis window</td><td>5 min (standard); 1 min ultra-short — note in reporting</td></tr>
-            <tr><td>Artifact correction</td><td>Moderate (unless data is extremely noisy)</td></tr>
-            <tr><td>Frequency method</td><td>Welch's Periodogram or AR model (both acceptable)</td></tr>
-            <tr><td>Smoothing priors λ</td><td>500 (default; suitable for most datasets)</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h3>Step 4 · Export Results</h3>
-      <div class="steps">
-        <div class="step"><div class="step-num">1</div><div class="step-content"><strong>PDF Report:</strong> Report &gt; Save Report</div></div>
-        <div class="step"><div class="step-num">2</div><div class="step-content"><strong>Batch processing</strong> (multiple files): requires Kubios Premium — use File &gt; Batch Processing.</div></div>
-        <div class="step"><div class="step-num">3</div><div class="step-content"><strong>CSV export</strong> for statistical analysis: File &gt; Export Results.</div></div>
-      </div>
-    </section>
-
-    <!-- SECTION 5 -->
-    <section class="section" id="interpretation">
-      <div class="section-header">
-        <span class="section-num">05</span>
-        <h2>Data Interpretation</h2>
-      </div>
-
-      <p>HRV varies enormously between individuals. Absolute values cannot be meaningfully compared across athletes. Always interpret relative to <strong>each athlete's personal baseline</strong>.</p>
-
-      <div class="amberbox">
-        <div class="amberbox-title">Interpretation Reference (relative to personal mean)</div>
-        <ul>
-          <li><strong>Normal range:</strong> within ±1 SD of rolling mean — continue planned training</li>
-          <li><strong>Mild suppression:</strong> 1–2 SD below mean — reduce intensity, prioritise recovery</li>
-          <li><strong>Significant suppression:</strong> &gt;2 SD below mean — consider rest day; rule out illness or overtraining</li>
-          <li><strong>Unusually elevated HRV:</strong> not always positive — extreme elevation may indicate early illness or parasympathetic rebound</li>
-        </ul>
-      </div>
-
-      <h3>Trend Analysis Principles</h3>
-      <div class="steps">
-        <div class="step"><div class="step-num">✓</div><div class="step-content">Use a <strong>7-day rolling average</strong> to smooth daily noise before drawing conclusions.</div></div>
-        <div class="step"><div class="step-num">✓</div><div class="step-content">Contextualise with training load metrics (TSS, sRPE, ACWR).</div></div>
-        <div class="step"><div class="step-num">✓</div><div class="step-content">A <strong>sustained downward trend</strong> over multiple days carries more clinical weight than a single low reading.</div></div>
-      </div>
-
-      <p>📄 Reference: <a href="https://doi.org/10.1123/ijspp.8.3.346" target="_blank">Plews et al. (2013) — Training Adaptation and HRV, IJSPP</a></p>
-    </section>
-
-    <!-- SECTION 6 -->
-    <section class="section" id="troubleshooting">
-      <div class="section-header">
-        <span class="section-num">06</span>
-        <h2>Troubleshooting</h2>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Problem</th><th>Likely Cause &amp; Solution</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Noisy / unstable signal</td><td>Poor electrode contact → moisten strap before wearing; check strap tension</td></tr>
-            <tr><td>Abnormally low HRV</td><td>Activity before measurement; insufficient rest; re-check protocol timing and posture</td></tr>
-            <tr><td>File format not recognised</td><td>Format mismatch → confirm device export format; convert to plain .txt RR interval list</td></tr>
-            <tr><td>High batch-to-batch variability</td><td>Inconsistent conditions → audit measurement time, posture, strap model across sessions</td></tr>
-            <tr><td>Frequency domain metrics missing</td><td>Kubios Standard lacks full frequency features → upgrade to Premium or switch to Python</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- SECTION 7 -->
-    <section class="section" id="resources">
-      <div class="section-header">
-        <span class="section-num">07</span>
-        <h2>References &amp; Resources</h2>
-      </div>
-
-      <h3>Key Literature</h3>
-      <div class="link-list">
-        <a href="https://doi.org/10.1093/oxfordjournals.eurheartj.a014868" target="_blank">Task Force ESC/NASPE — HRV Standards of Measurement (1996), European Heart Journal</a>
-        <a href="https://doi.org/10.1007/s40279-016-0645-7" target="_blank">Plews et al. — HRV in Elite Athletes: A Review, Sports Medicine (2017)</a>
-        <a href="https://doi.org/10.3389/fphys.2014.00002" target="_blank">Buchheit — Monitoring Training Status with HRV, Frontiers in Physiology (2014)</a>
-        <a href="https://doi.org/10.1123/ijspp.8.3.346" target="_blank">Plews et al. — Training Adaptation and HRV, IJSPP (2013)</a>
-      </div>
-
-      <h3>Software &amp; Hardware</h3>
-      <div class="link-list">
-        <a href="https://www.kubios.com" target="_blank">Kubios HRV — Official website &amp; downloads</a>
-        <a href="https://elitehrv.com" target="_blank">Elite HRV — App &amp; team management</a>
-        <a href="https://www.hrv4training.com" target="_blank">HRV4Training — Camera-based PPG app</a>
-        <a href="https://github.com/Aura-healthcare/hrv-analysis" target="_blank">Python hrv-analysis library (GitHub)</a>
-        <a href="https://rhrv.r-forge.r-project.org" target="_blank">RHRV — R package for HRV analysis</a>
-        <a href="https://www.polar.com/en/sensors/h10-heart-rate-sensor" target="_blank">Polar H10 — Recommended chest strap</a>
-      </div>
-    </section>
-
-  </div><!-- /content -->
 </main>
 
 <footer class="footer">
