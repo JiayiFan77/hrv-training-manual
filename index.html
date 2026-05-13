@@ -562,7 +562,12 @@
 </style>
 </head>
 <body>
-
+<script>
+  const password = prompt("Enter password:");
+  if (password !== "pcat") {
+    document.body.innerHTML = "Access denied.";
+  }
+</script>
 <!-- SIDEBAR -->
 <nav class="sidebar">
   <div class="sidebar-logo">
