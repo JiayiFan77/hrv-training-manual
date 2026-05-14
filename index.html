@@ -559,6 +559,23 @@
     .tool-grid { grid-template-columns: 1fr; }
     .hero h1 { font-size: 36px; }
   }
+  
+  figure {
+  margin: 20px 0;
+  text-align: center;
+  }
+
+  figure img {
+    max-width: 90%;
+    border: 1px solid var(--gray-200);
+  }
+
+  figcaption {
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-top: 8px;
+  }
+
 </style>
 </head>
 <body>
@@ -571,6 +588,7 @@
   </div>
   <div class="nav-label">Contents</div>
   <a href="#intro" class="nav-item"><span class="num">01</span>What is ECG?</a>
+  <a href="#editing" class="nav-item"><span class="num">02</span>Data Editing</a>
 </nav>
 
 <!-- MAIN -->
@@ -623,6 +641,30 @@
         Watch: 
         <a href="https://www.youtube.com/watch?v=oxsYe2FpZb8" target="_blank">Introduction to HRV (YouTube)</a>. 
         You don't have to understand all of the concepts, but do try to remember the pattern of the ECG waveform.
+      </p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section class="section" id="editing">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Data Editing</h2>
+      </div>
+      <h3>Clean Data</h3>
+      <p>
+        In MindWare, blue dots represent R peaks detected by the algorithm. 
+        An ideal recording shows all blue dots with no yellow markers, as shown below (Figure 1):
+      </p>
+      <figure>
+        <img src="images/clean data.png" alt="12147_T1_dbdos_baseline_child">
+        <img src="images/clean data 2.png" alt="12147_T1_dbdos_baseline_child">
+        <figcaption>Figure 1: Clean ECG recording.</figcaption>
+      </figure>
+      <p>
+        Your task is to review each file and correct any misidentified peaks until 
+        all segments are clean. Keep in mind that the algorithm is not always accurate — 
+        sometimes yellow dots are acceptable, and sometimes blue dots are incorrect. 
+        Always inspect every segment carefully, even if it appears to contain only blue dots.
       </p>
     </section>
 </main>
